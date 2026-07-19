@@ -1,11 +1,12 @@
 "use client"
 import React from 'react'
 import { useState } from 'react'
+import Link from 'next/link'
 
 const Shorten = () => {
     const [url, seturl] = useState("")
     const [shorturl, setshorturl] = useState("")
-    const [generated, setGenerated] = useState(false)
+    const [generated, setGenerated] = useState("")
     const generate = () => {
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -25,7 +26,9 @@ const Shorten = () => {
         fetch("/api/generate", requestOptions)
             .then((response) => response.json())
             .then((result) => {
-                
+                seturl("")
+                setshorturl("")
+                setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`)
                 console.log(result)
                 alert(result.message)
             })
@@ -47,6 +50,8 @@ const Shorten = () => {
                     placeholder='Enter your preferred short URL' onChange={e => { setshorturl(e.target.value) }} />
                 <button onClick={generate} className='bg-blue-500 rounded-lg shadow-lg p-3 py-1 font-bold cursor-pointer hover:bg-blue-300 text-white my-3'>Generate</button>
             </div>
+            {generated && <> <span className='font-bold text-lg'>Your Link: </span><code><Link target="_blank" href={generated}>{generated}</Link> 
+                </code></>}
         </div>
     )
 }
